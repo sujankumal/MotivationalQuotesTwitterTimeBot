@@ -58,13 +58,23 @@ def do_tweet(sc):
         lines_used = [line.rstrip() for line in file.readlines()]
     index = random.randint(0,lines)
     if index in lines_used: 
-        do_tweet()
+        do_tweet("is used")
+        return
     else:    
         lines_used.append(str(index))
         print(len(lines_used), index, motivations[index][0])
         
 #       Create a tweet
-        api.update_status(motivations[index][0])
+        try:
+            api.update_status(motivations[index][0])
+        except Exception as e:
+            print("Exception: ", str(e))
+            if(e[0].code != 186):
+                print("Exception Tweet Length")
+            else:
+                do_tweet("Exception")
+                return
+
         if len(lines_used) == lines:
             lines_used.clear()
     with open("lines_used.txt", "w+") as file:
