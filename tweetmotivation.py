@@ -62,11 +62,11 @@ def do_tweet(sc):
         return
     else:    
         lines_used.append(str(index))
-        print(len(lines_used), index, motivations[index][0])
+        print(len(lines_used), index, motivations[index][0]+"\n -"+ motivations[index][1])
         
 #       Create a tweet
         try:
-            api.update_status(motivations[index][0])
+            api.update_status(motivations[index][0]+"\n -"+ motivations[index][1])
         except Exception as e:
             print("Exception: ", str(e))
             if(e[0].code != 186):
