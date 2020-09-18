@@ -65,11 +65,13 @@ def do_tweet(sc):
         print(len(lines_used), index, motivations[index][0]+"\n -"+ motivations[index][1])
         
 #       Create a tweet
+        tweet = motivations[index][0]+"\n -"+ motivations[index][1]
         try:
-            api.update_status(motivations[index][0]+"\n -"+ motivations[index][1])
+            if(len(tweet)<=280):
+                api.update_status()
         except Exception as e:
             print("Exception: ", str(e))
-            if(e[0].code != 186):
+            if(e[0]['code'] != 186):
                 print("Exception Tweet Length")
             else:
                 do_tweet("Exception")
