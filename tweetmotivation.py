@@ -73,7 +73,7 @@ def do_tweet(sc):
         tweet = motivations[index][0]+"\n -"+ motivations[index][1]
         try:
             if(len(tweet)<=280):
-                api.update_status()
+                api.update_status(tweet)
             else:
                 do_tweet('Tweet Length')
                 return
