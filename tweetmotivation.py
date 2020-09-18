@@ -62,25 +62,30 @@ def do_tweet(sc):
         return
     else:    
         lines_used.append(str(index))
-        print(len(lines_used), index, motivations[index][0]+"\n -"+ motivations[index][1])
+        print(sc ,len(lines_used), index,"\n", motivations[index][0]+"\n -"+ motivations[index][1])
         
+        if len(lines_used) == lines:
+            lines_used.clear()
+        with open("lines_used.txt", "w+") as file:
+            file.writelines("%s\n" % line for line in lines_used)
+
 #       Create a tweet
         tweet = motivations[index][0]+"\n -"+ motivations[index][1]
         try:
             if(len(tweet)<=280):
                 api.update_status()
+            else:
+                do_tweet('Tweet Length')
+                return
+
         except Exception as e:
-            print("Exception: ", str(e))
             if(e[0]['code'] != 186):
                 print("Exception Tweet Length")
             else:
+                print("Exception: ", str(e))
                 do_tweet("Exception")
                 return
 
-        if len(lines_used) == lines:
-            lines_used.clear()
-    with open("lines_used.txt", "w+") as file:
-        file.writelines("%s\n" % line for line in lines_used)
     scheduler.enter(1200, 1, do_tweet, ('scheduler_',))
     
 scheduler.enter(2, 1, do_tweet, ('scheduler',))
