@@ -54,6 +54,10 @@ with open('MotivationalQuotesDatabase.csv') as csv_file:
 lines = len(motivations)
 scheduler = sched.scheduler(time.time, time.sleep)
 def do_tweet(sc): 
+    
+    print("\n Do Tweet. Sleep for 30 second.",time.asctime())
+    time.sleep(30)
+    
     with open("lines_used.txt", "r") as file:
         lines_used = [line.rstrip() for line in file.readlines()]
     index = random.randint(0,lines)
@@ -85,8 +89,8 @@ def do_tweet(sc):
                 print("Exception: ", str(e))
                 do_tweet("Exception")
                 return
-
-    scheduler.enter(1200, 1, do_tweet, ('scheduler_',))
+    print("\n Schedule: ",time.asctime())
+    scheduler.enter(90, 1, do_tweet, ('scheduler_',))
     
 scheduler.enter(2, 1, do_tweet, ('scheduler',))
 scheduler.run()
