@@ -81,7 +81,8 @@ def do_tweet(sc):
             tweet_list = [tweet[i:i+280] for i in range(0, tweet_length, 280)]
             tweet_obj = None
             for tweet in tweet_list:
-                tweet_obj = api.update_status(status=tweet, in_reply_to_status_id=tweet_obj)
+                tweet_obj = api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
+                
             
         except Exception as e:
             print("Exception: ", str(e))
