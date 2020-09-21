@@ -52,12 +52,51 @@ with open('MotivationalQuotesDatabase.csv') as csv_file:
     line_count = 0
     
 lines = len(motivations)
+
+with open('Facts.txt',  encoding='utf8') as fact_file:
+    facts = [line.rstrip() for line in fact_file.readlines()]
+fact_lines = len(facts)
+
 scheduler = sched.scheduler(time.time, time.sleep)
 def do_tweet(sc): 
     
     print("\n Do Tweet. Sleep for 30 second.",time.asctime())
     time.sleep(30)
-    
+    if(random.getrandbits(1)):
+        # Facts
+        print("Fact")
+        with open("fact_lines_used.txt", "r") as file:
+            fact_lines_used = [line.rstrip() for line in file.readlines()]
+        fact_index = random.randint(0,fact_lines)
+        if fact_index in fact_lines_used: 
+            do_tweet("fact is used")
+            return
+        else:    
+            fact_lines_used.append(str(fact_index))
+            print(sc ,len(fact_lines_used), fact_index,"\n", facts[fact_index])
+            
+            if len(fact_lines_used) == fact_lines:
+                fact_lines_used.clear()
+            with open("fact_lines_used.txt", "w+") as file:
+                file.writelines("%s\n" % line for line in fact_lines_used)
+            
+            fact_tweet = facts[fact_index]
+            try:
+                tweet_length = len(fact_tweet)
+                print("Tweet Length: ", tweet_length)
+                tweet_list = [fact_tweet[i:i+280] for i in range(0, tweet_length, 280)]
+                tweet_obj = None
+                for tweet in tweet_list:
+                    tweet_obj = api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
+            
+            except Exception as e:
+                print("Fact Tweet Exception: ", str(e))
+                do_tweet("Fact Tweet Exception")
+                return
+        print("\n Schedule From Fact: ",time.asctime())
+        scheduler.enter(90, 1, do_tweet, ('fact_',))
+        return
+        
     with open("lines_used.txt", "r") as file:
         lines_used = [line.rstrip() for line in file.readlines()]
     index = random.randint(0,lines)
