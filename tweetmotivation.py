@@ -76,19 +76,17 @@ def do_tweet(sc):
 #       Create a tweet
         tweet = motivations[index][0]+"\n -"+ motivations[index][1]
         try:
-            if(len(tweet)<=280):
-                api.update_status(tweet)
-            else:
-                do_tweet('Tweet Length')
-                return
-
+            tweet_length = len(tweet)
+            print("Tweet Length: ", tweet_length)
+            tweet_list = [tweet[i:i+280] for i in range(0, tweet_length, 280)]
+            tweet_obj = None
+            for tweet in tweet_list:
+                tweet_obj = api.update_status(status=tweet, in_reply_to_status_id=tweet_obj)
+            
         except Exception as e:
-            if(e[0]['code'] != 186):
-                print("Exception Tweet Length")
-            else:
-                print("Exception: ", str(e))
-                do_tweet("Exception")
-                return
+            print("Exception: ", str(e))
+            do_tweet("Exception")
+            return
     print("\n Schedule: ",time.asctime())
     scheduler.enter(90, 1, do_tweet, ('scheduler_',))
     
