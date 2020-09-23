@@ -64,7 +64,7 @@ def split_string(str, limit, sep=" "):
     """
     Split String to length limit without breaking word
     """
-    words = str.split()
+    words = str.split(sep)
     if max(map(len, words)) > limit:
         raise ValueError("limit is too small")
     res, part, others = [], words[0], words[1:]
