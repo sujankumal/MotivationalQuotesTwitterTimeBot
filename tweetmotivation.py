@@ -58,6 +58,27 @@ with open('Facts.txt',  encoding='utf8') as fact_file:
 fact_lines = len(facts)
 
 scheduler = sched.scheduler(time.time, time.sleep)
+
+
+def split_string(str, limit, sep=" "):
+    """
+    Split String to length limit without breaking word
+    """
+    words = str.split()
+    if max(map(len, words)) > limit:
+        raise ValueError("limit is too small")
+    res, part, others = [], words[0], words[1:]
+    for word in others:
+        if len(sep)+len(word) > limit-len(part):
+            res.append(part)
+            part = word
+        else:
+            part += sep+word
+    if part:
+        res.append(part)
+    return res
+
+
 def do_tweet(sc): 
     
     print("\n Do Tweet. Sleep for 30 second.",time.asctime())
@@ -84,7 +105,8 @@ def do_tweet(sc):
             try:
                 tweet_length = len(fact_tweet)
                 print("Tweet Length: ", tweet_length)
-                tweet_list = [fact_tweet[i:i+280] for i in range(0, tweet_length, 280)]
+                # tweet_list = [fact_tweet[i:i+280] for i in range(0, tweet_length, 280)]
+                tweet_list = split_string(str=fact_tweet, limit=280)
                 tweet_obj = None
                 for tweet in tweet_list:
                     tweet_obj = api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
@@ -117,7 +139,8 @@ def do_tweet(sc):
         try:
             tweet_length = len(tweet)
             print("Tweet Length: ", tweet_length)
-            tweet_list = [tweet[i:i+280] for i in range(0, tweet_length, 280)]
+            # tweet_list = [tweet[i:i+280] for i in range(0, tweet_length, 280)]
+            tweet_list = split_string(str=tweet, limit=280)
             tweet_obj = None
             for tweet in tweet_list:
                 tweet_obj = api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
