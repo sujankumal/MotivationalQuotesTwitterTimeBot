@@ -62,9 +62,9 @@ scheduler = sched.scheduler(time.time, time.sleep)
 
 
 def split_string(str, limit, sep=" "):
-    """
-    Split String to length limit without breaking word
-    """
+    
+    # Split String to length limit without breaking word
+    
     words = str.split(sep)
     if max(map(len, words)) > limit:
         raise ValueError("limit is too small")
