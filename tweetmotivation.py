@@ -160,7 +160,7 @@ scheduler.run()
     
 
 import tweepy
-import csv
+# import csv
 import mysql.connector
 from mysql.connector import errorcode
 import random
@@ -325,8 +325,8 @@ def split_string(str, limit, sep=" "):
 motivation_lines = 46556
 facts_lines = 3105
 def do_tweet(sc): 
-    print("\n Do Tweet. Sleep for 30 second.",time.asctime())
-    time.sleep(30)
+    print("\n Do Tweet. Sleep for 5 second.",time.asctime())
+    time.sleep(5)
     if(random.getrandbits(1)):
         print("Fact")
         fact_index = random.randint(0,facts_lines)
@@ -368,7 +368,7 @@ def do_tweet(sc):
                 do_tweet("Fact Tweet Exception")
                 return
         print("\n Schedule From Fact: ",time.asctime())
-        scheduler.enter(90, 1, do_tweet, ('fact_Fact',))
+        scheduler.enter(355, 1, do_tweet, ('fact_Fact',))
         return
     ####################################################
     
@@ -410,7 +410,7 @@ def do_tweet(sc):
             do_tweet("Exception motivation")
             return
     print("\n Schedule from motivation: ",time.asctime())
-    scheduler.enter(600, 1, do_tweet, ('scheduler_motivation',))
+    scheduler.enter(355, 1, do_tweet, ('scheduler_motivation',))
     
 scheduler.enter(2, 1, do_tweet, ('scheduler',))
 scheduler.run()
