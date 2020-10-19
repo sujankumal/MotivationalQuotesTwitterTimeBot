@@ -347,7 +347,7 @@ def do_tweet(sc):
             return
         else:
             print("tweet and update facts")
-            update_query_set_used = execute_update_query_set_used(cursor,'facts',fact_index)
+            update_query_set_used = execute_update_query_set_used(cnx, cursor,'facts',fact_index)
                 
             if update_query_set_used == 1:
                 do_tweet("fact update Exception")
@@ -390,7 +390,7 @@ def do_tweet(sc):
         return
     else:
         print("tweet and update motivation")
-        update_query_set_used = execute_update_query_set_used(cursor, 'motivation',motivation_index)
+        update_query_set_used = execute_update_query_set_used(cnx, cursor, 'motivation',motivation_index)
         if update_query_set_used == 1:
             do_tweet("motivation update Exception")
             return
