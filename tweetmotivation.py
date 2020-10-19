@@ -226,22 +226,28 @@ def mysql_connect():
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Something is wrong with your user name or password")
+            import sys
+            sys.exit()
         elif err.errno == errorcode.ER_BAD_DB_ERROR:
             print("Database does not exist")       
+            import sys
+            sys.exit()
         else:
             print(err)
-        import sys
-        sys.exit()
+        cnx.close()
+        return (1,1)
     
     cursor = cnx.cursor()
     try:
         cursor.execute("USE {}".format(DB_NAME))
     except mysql.connector.Error as err:
         print("Database {} does not exists.".format(DB_NAME))
+        cursor.close()
+        cnx.close()
         import sys
         sys.exit()
     return (cnx, cursor)
-    
+
 def execute_get_query(cnx,cursor, table, index):
 
     update_cursor = cnx.cursor(buffered=True)
@@ -249,13 +255,20 @@ def execute_get_query(cnx,cursor, table, index):
         update_cursor.execute("USE {}".format(DB_NAME))
     except mysql.connector.Error as err:
         print("Database {} does not exists.".format(DB_NAME))
+        update_cursor.close()
+        cursor.close()
+        cnx.close()
         import sys
         sys.exit()
     try:
         sql = "SELECT m_no FROM {table} WHERE used is NULL".format(table=table)
         update_cursor.execute(sql)
     except Exception as E:
-        print(str(E))
+        print("update_cursor: ",str(E))
+        update_cursor.close()
+        cursor.close()
+        cnx.close()
+        return 1
     if update_cursor.rowcount == 0:
         sql_update_query = """Update {table} set used = null""".format(table=table)
         update_cursor.execute(sql_update_query)
@@ -266,16 +279,22 @@ def execute_get_query(cnx,cursor, table, index):
         sql = "SELECT * FROM {table} WHERE m_no = {index}".format(table=table, index=index)
         cursor.execute(sql)
     except Exception as E:
-        print(str(E))
+        print("Error: ", sql, str(E))
+        cursor.close()
+        cnx.close()
+        return 1
     return cursor.fetchone()
 
-def execute_update_query_set_used(cursor, table, index):
+def execute_update_query_set_used(cnx, cursor, table, index):
     try:
         sql = "Update {table} set used = 1 WHERE m_no = {index}".format(table=table, index=index)
         cursor.execute(sql)
     except Exception as E:
-        print(str(E))
-    return cursor.fetchone()
+        print("Error: ", sql, str(E))
+        cursor.close()
+        cnx.close()
+        return 1
+    return None
 
 def mysql_close(cnx, cursor):
     cursor.close()
@@ -312,7 +331,15 @@ def do_tweet(sc):
         print("Fact")
         fact_index = random.randint(0,facts_lines)
         cnx, cursor = mysql_connect()
+        if cursor == 1:
+            do_tweet("fact Exception")
+            return
         tweet_to_tweet = execute_get_query(cnx,cursor,'facts',fact_index)
+        
+        if tweet_to_tweet == 1:
+            do_tweet("fact Exception")
+            return
+
         if tweet_to_tweet[2]:
             print("continue facts")
             mysql_close(cnx, cursor)
@@ -320,7 +347,11 @@ def do_tweet(sc):
             return
         else:
             print("tweet and update facts")
-            execute_update_query_set_used(cursor,'facts',fact_index)
+            update_query_set_used = execute_update_query_set_used(cursor,'facts',fact_index)
+                
+            if update_query_set_used == 1:
+                do_tweet("fact update Exception")
+                return
             mysql_commit(cnx, cursor)
             mysql_close(cnx, cursor)
 
@@ -345,7 +376,13 @@ def do_tweet(sc):
     motivation_index = random.randint(0,motivation_lines)
     
     cnx, cursor = mysql_connect()
+    if cursor == 1:
+        do_tweet("Motivation Exception")
+        return
     tweet_to_tweet = execute_get_query(cnx,cursor, 'motivation',motivation_index)
+    if tweet_to_tweet == 1:
+        do_tweet("Motivation Exception")
+        return
     if tweet_to_tweet[4]:
         print("continue motivation")
         mysql_close(cnx, cursor)
@@ -353,7 +390,10 @@ def do_tweet(sc):
         return
     else:
         print("tweet and update motivation")
-        execute_update_query_set_used(cursor, 'motivation',motivation_index)
+        update_query_set_used = execute_update_query_set_used(cursor, 'motivation',motivation_index)
+        if update_query_set_used == 1:
+            do_tweet("motivation update Exception")
+            return
         mysql_commit(cnx, cursor)
         mysql_close(cnx, cursor)
        
