@@ -347,13 +347,13 @@ def do_tweet(sc):
             return
         else:
             print("tweet and update facts")
-            update_query_set_used = execute_update_query_set_used(cnx, cursor,'facts',fact_index)
+            # update_query_set_used = execute_update_query_set_used(cnx, cursor,'facts',fact_index)
                 
-            if update_query_set_used == 1:
-                do_tweet("fact update Exception")
-                return
-            mysql_commit(cnx, cursor)
-            mysql_close(cnx, cursor)
+            # if update_query_set_used == 1:
+            #     do_tweet("fact update Exception")
+            #     return
+            # mysql_commit(cnx, cursor)
+            # mysql_close(cnx, cursor)
 
             fact_tweet = tweet_to_tweet[1]
             try:
@@ -363,6 +363,14 @@ def do_tweet(sc):
                 tweet_obj = None
                 for tweet in tweet_list:
                     tweet_obj = api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
+
+                update_query_set_used = execute_update_query_set_used(cnx, cursor,'facts',fact_index)                
+                if update_query_set_used == 1:
+                    do_tweet("fact update Exception")
+                    return
+                mysql_commit(cnx, cursor)
+                mysql_close(cnx, cursor)
+
             except Exception as e:
                 print("Fact Tweet Exception: ", str(e))
                 do_tweet("Fact Tweet Exception")
@@ -390,12 +398,12 @@ def do_tweet(sc):
         return
     else:
         print("tweet and update motivation")
-        update_query_set_used = execute_update_query_set_used(cnx, cursor, 'motivation',motivation_index)
-        if update_query_set_used == 1:
-            do_tweet("motivation update Exception")
-            return
-        mysql_commit(cnx, cursor)
-        mysql_close(cnx, cursor)
+        # update_query_set_used = execute_update_query_set_used(cnx, cursor, 'motivation',motivation_index)
+        # if update_query_set_used == 1:
+        #     do_tweet("motivation update Exception")
+        #     return
+        # mysql_commit(cnx, cursor)
+        # mysql_close(cnx, cursor)
        
         tweet = tweet_to_tweet[1]+"\n- "+ tweet_to_tweet[2]
         try:
@@ -405,6 +413,14 @@ def do_tweet(sc):
             tweet_obj = None
             for tweet in tweet_list:
                 tweet_obj = api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
+       
+            update_query_set_used = execute_update_query_set_used(cnx, cursor, 'motivation',motivation_index)
+            if update_query_set_used == 1:
+                do_tweet("motivation update Exception")
+                return
+            mysql_commit(cnx, cursor)
+            mysql_close(cnx, cursor)
+        
         except Exception as e:
             print("motivation Exception: ", str(e))
             do_tweet("Exception motivation")
