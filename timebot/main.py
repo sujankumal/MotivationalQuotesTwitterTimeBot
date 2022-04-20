@@ -28,8 +28,14 @@ class Home(Widget):
             self.api = tweepy.API(self.auth)
         except Exception as e:
             print("Exception",str(e))
-            self.display += str(e)+"\n"
+            self.print_display(str(e)+"\n")
 
+    def print_display(self, text):
+        t = str(self.display)
+        if len(t)>1000:
+            self.display = text
+        else:
+            self.display += text
 
     def split_string(str, limit, sep=" "):
         """
@@ -53,7 +59,7 @@ class Home(Widget):
         tweet_to_tweet = str(self.ids.tweet_input.text)
         tweet_length = len(tweet_to_tweet)
         if tweet_length == 0:
-            self.display += "tweet_length is 0"
+            self.print_display("tweet_length is 0")
             return
 
         print(tweet_to_tweet,"Fact Tweet Length: ", tweet_length)
@@ -78,9 +84,9 @@ class Home(Widget):
                 tweet_obj = self.api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
         except Exception as e:
             print("Exception",str(e))
-            self.display += str(e)+"\n"
+            self.print_display(str(e)+"\n")
         
-        self.display += tweet_to_tweet + str("\n")
+        self.print_display(tweet_to_tweet + str("\n"))
         self.ids.tweet_input.text = ''
 
     def like_tweets(self):
@@ -91,12 +97,12 @@ class Home(Widget):
             self.ids.progress_bar.value = 0
             tweet_processed = 0
             for tweet in tweets:
-                self.display += "("+tweet.user.screen_name+"): "+tweet.text+"\n"
+                self.print_display("("+tweet.user.screen_name+"): "+tweet.text+"\n")
                 if tweet.in_reply_to_status_id is None:
                     # Not a reply, original tweet
                     if not tweet.favorited:
-                        tweet.favorite()
-                        self.display += "Above tweet is liked.\n"
+                        # tweet.favorite()
+                        self.print_display("Above tweet is liked.\n")
                         
                 tweet_processed += 1
                 self.ids.progress_bar.value = tweet_processed/no_of_tweets 
@@ -104,7 +110,7 @@ class Home(Widget):
 
         except Exception as e:
             print("Exception",str(e))
-            self.display += str(e)+"\n"
+            self.print_display(str(e)+"\n")
 
         
     def likeclick(self):
