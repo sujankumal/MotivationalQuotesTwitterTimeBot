@@ -101,7 +101,7 @@ class Home(Widget):
                 if tweet.in_reply_to_status_id is None:
                     # Not a reply, original tweet
                     if not tweet.favorited:
-                        # tweet.favorite()
+                        tweet.favorite()
                         self.print_display("Above tweet is liked.\n")
                         
                 tweet_processed += 1
