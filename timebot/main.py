@@ -1,9 +1,8 @@
-import imp
+
 from kivy.app import App
 import tweepy
 import threading
 import time
-from kivy.clock import mainthread
 
 from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
@@ -29,6 +28,7 @@ class Home(Widget):
             self.api = tweepy.API(self.auth)
         except Exception as e:
             print("Exception",str(e))
+            self.display += str(e)+"\n"
 
 
     def split_string(str, limit, sep=" "):
@@ -78,13 +78,14 @@ class Home(Widget):
                 tweet_obj = self.api.update_status(status=tweet, in_reply_to_status_id= tweet_obj.id if tweet_obj else None)
         except Exception as e:
             print("Exception",str(e))
+            self.display += str(e)+"\n"
         
         self.display += tweet_to_tweet + str("\n")
         self.ids.tweet_input.text = ''
 
     def like_tweets(self):
         try:
-            tweets = self.api.home_timeline(count=20)
+            tweets = self.api.home_timeline(count=100)
         
             for tweet in tweets:
                 self.display += "("+tweet.user.screen_name+"): "+tweet.text+"\n"
@@ -98,6 +99,7 @@ class Home(Widget):
 
         except Exception as e:
             print("Exception",str(e))
+            self.display += str(e)+"\n"
 
         
     def likeclick(self):
