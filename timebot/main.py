@@ -84,9 +84,12 @@ class Home(Widget):
         self.ids.tweet_input.text = ''
 
     def like_tweets(self):
+        no_of_tweets = 100
         try:
-            tweets = self.api.home_timeline(count=100)
+            tweets = self.api.home_timeline(count=no_of_tweets)
         
+            self.ids.progress_bar.value = 0
+            tweet_processed = 0
             for tweet in tweets:
                 self.display += "("+tweet.user.screen_name+"): "+tweet.text+"\n"
                 if tweet.in_reply_to_status_id is None:
@@ -95,6 +98,8 @@ class Home(Widget):
                         tweet.favorite()
                         self.display += "Above tweet is liked.\n"
                         
+                tweet_processed += 1
+                self.ids.progress_bar.value = tweet_processed/no_of_tweets 
                 time.sleep(0.15)
 
         except Exception as e:

@@ -4,20 +4,15 @@
     BoxLayout:
         orientation:"vertical"
         size:root.width, root.height
-        padding:30,30,30,0
+        padding:10,10,10,0
         
         GridLayout:
-            padding:20,20,0,20
+            padding:20,20,0,0
             cols:2 
             size:root.width, root.height
-            canvas.before:
-                Color:
-                    rgba: 0.3, 0.5, 0.7, 1
-                Line:
-                    width: 20
-                    rectangle: self.x, self.y, self.width, self.height
+
             GridLayout:
-                padding:40,20,20,20
+                padding:40,10,10,10
                 rows:2                
                 canvas.before:
                     Color:
@@ -25,12 +20,12 @@
                 Button:
                     id:tweet_label
                     text:"Tweet"
-                    size_hint: None, None
+                    # size_hint: None, None
                     on_press:root.tweet()
                 Button:
                     id:buttonlike
                     text:"Like"
-                    size_hint: None, None
+                    # size_hint: None, None
                     on_press: root.likeclick()
 
                 
@@ -41,7 +36,14 @@
                 padding: 20,0,20,20
                 halign: 'left'
                 valign: 'middle'
-            
+
+        ProgressBar:
+            id:progress_bar
+            value: 0
+            min: 0
+            max: 1
+            padding:0,0,0,0
+
         ScrollView:
             do_scroll_x: False
             do_scroll_y: True
@@ -56,4 +58,3 @@
                 padding: 30, 30
                 id:displayid
                 text:root.display
-                
